@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css?family=Baloo+2&display=swap');
+body {
+	font-family: 'Baloo 2', cursive;
+	font-size: 20px;
+}
+main {
+	background-color: #f4f4f4;
+	color: rgb(71, 71, 71);
+	height: 100%;
+	text-align: center;
+}
+footer {
+	bottom: 0;
+	font-size: .5em;
+	position: fixed;
+}
+.add-site-input {
+	width: 15em;
+	border: none;
+	font-size: 1em;
+	padding: .1em;
+	font-family: 'Baloo 2', cursive;
+}
+.add-site-input:focus {
+	outline: none;
+	box-shadow: 0px 0px 4px 1px rgb(92, 222, 255);
+}
+.add-site-button {
+	font-size: 1.2em;
+	border-radius: 4px;
+	border: none;
+	display: block;
+	margin: 1em auto;
+	color: #6874e7;
+	font-family: 'Baloo 2', cursive;
+	background: #c1eaeb;
+	padding: 0 25px;
+	cursor: pointer;
+	position: sticky;
+}
+.sites-box-div {
+	min-height: 3em;
+	width: 30em;
+	margin: auto;
+	box-shadow: 0 0 34px -19px rgb(119, 186, 241);
+	background: white;
+	border-radius: 10px;
+}
+.sites-box-ul {
+	list-style: none;
+	height: 75vh;
+	overflow: auto;
+	padding: 0;
+}
+li {
+	box-shadow: 0px -1px 0px 0px #f4f4f4;
+}
+.input-error {
+	box-shadow: 0px 0px 4px 1px red !important;
+	border-radius: 2px;
+}
