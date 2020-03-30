@@ -24,14 +24,16 @@ app.post('/RegisterIp', async (req, res) => {
 		throw ex;
 	}
 });
-app.get('/isBlackSite', async (req, res) => {
+app.post('/isBlackSite', async (req, res) => {
 	//this is expensive for the server, but we need it cause we don't know if the user will decide to fool around...
 	let ip = req.ip;
+	let url = sanitize(req.body.url);
+
 	try {
 		let db = await MongoClient.connect(dbUrl);
 		const user = await db.db('your-jewish-mother').collection('user').findOne({ ip });
 		let isBlackSite = user.black_sites.find((blackSite) => {
-			return req.url.search(blackSite) != -1;
+			return url.search(blackSite) != -1;
 		});
 		res.send(isBlackSite);
 	} catch (ex) {

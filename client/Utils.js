@@ -1,4 +1,4 @@
-const Utils = {
+let Utils = {
 	GetServerAdress: function GetServerAdress() {
 		if (window.location.href.includes('localhost')) {
 			const uri = new URL(window.location.href);

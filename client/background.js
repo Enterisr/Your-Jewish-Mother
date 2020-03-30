@@ -1,5 +1,6 @@
 const bannedSites = [ 'FACEBOOK.COM', 'YOUTUBE.COM', 'REDDIT.COM', 'STACKOVERFLOW.COM' ];
 const serverAddress = Utils.GetServerAdress();
+alert(serverAddress);
 async function RaiseNotfication() {
 	let message = await fetch(`${serverAddress}/giveMeSomeThingToSay`);
 	message = await message.text();
@@ -14,10 +15,10 @@ async function RaiseNotfication() {
 	return new Notification('your jewish mother says: ', options);
 }
 
-function EnsureNotficationPermission() {
+function SendNotification() {
 	if (!('Notification' in window)) {
 	} else if (Notification.permission === 'granted') {
-		RaiseNotfication(notficationValue);
+		RaiseNotfication();
 	} else if (Notification.permission !== 'denied') {
 		Notification.requestPermission().then(function(permission) {
 			if (permission === 'granted') {
@@ -35,7 +36,11 @@ function GenerateRandomMessages() {
 	setTimeout(() => {
 		chrome.tabs.query({ active: true, currentWindow: true }, async function(tabs) {
 			if (tabs[0]) {
-				let isBlackSite = await fetch(`${serverAddress}/isBlackSite`);
+				let isBlackSite = await fetch(`${serverAddress}/isBlackSite`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ url: window.location.href })
+				});
 				if (isBlackSite) {
 					SendNotification(tabs[0].url);
 					GenerateRandomMessages();

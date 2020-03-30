@@ -16,7 +16,7 @@
 		}
 	],
 	"background": {
-		"scripts": [ "background.js" ],
+		"scripts": [ "Utils.js", "background.js" ],
 		"persistent": true
 	},
 	"web_accessible_resources": [ "notificationSound.mp3" ]
