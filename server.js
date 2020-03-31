@@ -64,7 +64,7 @@ app.post('/PostNewBlackSite', async (req, res) => {
 	try {
 		let db = await MongoClient.connect(dbUrl);
 		let url = sanitize(req.body.url);
-		let url = url.replace(/^http(s?):\/\//i, ''); //remove protocol...
+		url = url.replace(/^http(s?):\/\//i, ''); //remove protocol...
 		await db.db('your-jewish-mother').collection('user').updateOne({ ip }, { $addToSet: { black_sites: url } });
 
 		res.send(true);
