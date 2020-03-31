@@ -1,12 +1,9 @@
 let server = Utils.GetServerAdress();
 document.addEventListener('DOMContentLoaded', () => {
+	BindUninterestingEvents();
 	GetBlackSites();
-	document.addEventListener('keydown', (event) => {
-		if (event.key == 'Enter') {
-			AddSite();
-		}
-	});
 });
+
 async function GetBlackSites() {
 	let blackSites = await fetch(`${server}/GetBlackSites`, {
 		method: 'GET',
@@ -45,7 +42,7 @@ function AddSite() {
         </p>`;
 		}, 1000);
 	} finally {
-		document.querySelector('.add-site-input').value = '';
+		document.querySelector('.add-site-input').value = 'http://';
 	}
 	if (isValidSite) {
 		let newLi = document.createElement('li');
@@ -58,4 +55,14 @@ function AddSite() {
 			body: JSON.stringify({ url: normalizedURL })
 		});
 	}
+}
+function BindUninterestingEvents() {
+	document.addEventListener('keydown', (event) => {
+		if (event.key == 'Enter') {
+			AddSite();
+		}
+	});
+	document.querySelector('.add-site-button').addEventListener('click', () => {
+		AddSite();
+	});
 }

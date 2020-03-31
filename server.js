@@ -28,7 +28,7 @@ app.post('/isBlackSite', async (req, res) => {
 	//this is expensive for the server, but we need it cause we don't know if the user will decide to fool around...
 	let ip = req.ip;
 	let url = sanitize(req.body.url);
-
+	url = url.replace(/^http(s?):\/\//i, ''); //remove protocol
 	try {
 		let db = await MongoClient.connect(dbUrl);
 		const user = await db.db('your-jewish-mother').collection('user').findOne({ ip });
@@ -64,6 +64,7 @@ app.post('/PostNewBlackSite', async (req, res) => {
 	try {
 		let db = await MongoClient.connect(dbUrl);
 		let url = sanitize(req.body.url);
+		let url = url.replace(/^http(s?):\/\//i, ''); //remove protocol...
 		await db.db('your-jewish-mother').collection('user').updateOne({ ip }, { $addToSet: { black_sites: url } });
 
 		res.send(true);
