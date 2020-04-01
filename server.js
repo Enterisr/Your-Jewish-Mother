@@ -17,7 +17,7 @@ function selectRandomFromArray(arr) {
 app.post('/RegisterIp', async (req, res) => {
 	try {
 		let db = await MongoClient.connect(dbUrl);
-		await db.db('your-jewish-mother').collection('user').insertOne({ ip });
+		await db.db('your-jewish-mother').collection('user').insertOne({ ip, assertivness: 0 });
 		res.send(true);
 	} catch (ex) {
 		res.send(false);
@@ -28,14 +28,16 @@ app.post('/isBlackSite', async (req, res) => {
 	//this is expensive for the server, but we need it cause we don't know if the user will decide to fool around...
 	let ip = req.ip;
 	let url = sanitize(req.body.url);
-	url = url.replace(/^http(s?):\/\//i, ''); //remove protocol
+	url = new URL(url);
 	try {
 		let db = await MongoClient.connect(dbUrl);
 		const user = await db.db('your-jewish-mother').collection('user').findOne({ ip });
 		let isBlackSite = user.black_sites.find((blackSite) => {
-			return url.search(blackSite) != -1;
+			let blackSiteUrl = new URL(blackSite);
+			return blackSiteUrl.hostname == url.hostname;
 		});
-		res.send(isBlackSite);
+
+		res.send({ isBlackSite: isBlackSite != undefined, assertivness: user.assertivness });
 	} catch (ex) {
 		res.send(false);
 		throw ex;
@@ -48,12 +50,14 @@ app.get('/giveMeSomeThingToSay', (req, res) => {
 		res.send(selectRandomFromArray(sentencesArray));
 	});
 });
-app.get('/GetBlackSites', async (req, res) => {
+app.get('/GetUserInfo', async (req, res) => {
 	let ip = req.ip;
 	try {
+		const levels = [ 'soft kitty', 'your mom', "your friend's mom", 'Golda Meir', 'HARSH LOVE' ];
 		let db = await MongoClient.connect(dbUrl);
 		let user = await db.db('your-jewish-mother').collection('user').findOne({ ip });
-		res.send(user.black_sites);
+		let data = { user, levels };
+		res.send(data);
 	} catch (ex) {
 		res.send(false);
 		throw ex;
@@ -64,12 +68,22 @@ app.post('/PostNewBlackSite', async (req, res) => {
 	try {
 		let db = await MongoClient.connect(dbUrl);
 		let url = sanitize(req.body.url);
-		url = url.replace(/^http(s?):\/\//i, ''); //remove protocol...
 		await db.db('your-jewish-mother').collection('user').updateOne({ ip }, { $addToSet: { black_sites: url } });
-
 		res.send(true);
 	} catch (ex) {
-		res.send(false);
+		res.status(500).send('there was an error!');
+		throw ex;
+	}
+});
+app.post('/UpdateAssertivness', async (req, res) => {
+	let ip = req.ip;
+	try {
+		let db = await MongoClient.connect(dbUrl);
+		let assertivness = sanitize(req.body.assertivness);
+		await db.db('your-jewish-mother').collection('user').updateOne({ ip }, { $set: { assertivness } });
+		res.send(true);
+	} catch (ex) {
+		res.status(500).send('there was an error!');
 		throw ex;
 	}
 });

@@ -1,18 +1,50 @@
-let server = Utils.GetServerAdress();
+const server = Utils.GetServerAdress();
 document.addEventListener('DOMContentLoaded', () => {
 	BindUninterestingEvents();
 	GetBlackSites();
 });
+function PaintText(levels, currentAssertivness) {
+	const span = document.querySelector('#assertiveness-span');
 
+	if (levels.length == currentAssertivness + 1) {
+		span.classList.add('slide-p-redText');
+		span.classList.remove('slide-p-BlueText');
+	} else {
+		span.classList.add('slide-p-BlueText');
+		span.classList.remove('slide-p-redText');
+	}
+}
+function InitSlider(levels, currentAssertivness) {
+	const slider = document.querySelector('.obsses-slider');
+	const assertiveLevelText = document.querySelector('.slide-p-BlueText');
+	currentAssertivness = currentAssertivness - 1;
+	slider.value = parseInt(100 * currentAssertivness / (levels.length - 1));
+	assertiveLevelText.textContent = levels[currentAssertivness];
+	PaintText(levels, currentAssertivness);
+	slider.addEventListener('change', async function() {
+		let assertivnessPrecent = parseInt(slider.value);
+		let assertivnessIdx = parseInt(levels.length / 101 * assertivnessPrecent); //101 so it won't ever get to non existing index..
+		assertiveLevelText.textContent = levels[assertivnessIdx];
+		PaintText(levels, assertivnessIdx);
+
+		await fetch(`${server}/UpdateAssertivness`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ assertivness: assertivnessIdx + 1 })
+		});
+	});
+}
 async function GetBlackSites() {
-	let blackSites = await fetch(`${server}/GetBlackSites`, {
+	let data = await fetch(`${server}/GetUserInfo`, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/json' }
 	});
-	let blackSitesJsoned = await blackSites.json();
-	if (blackSitesJsoned.length > 0) {
-		PopulateBlackList(blackSitesJsoned);
+	let { user, levels } = await data.json();
+	console.table(user);
+	if (user.black_sites.length > 0) {
+		PopulateBlackList(user.black_sites);
 	}
+	InitSlider(levels, user.assertivness);
 }
 function PopulateBlackList(sites) {
 	sites.forEach((site) => {

@@ -8,7 +8,7 @@
 		"default_icon": "icon128.png",
 		"default_popup": "popup.html"
 	},
-	"permissions": [ "notifications", "tabs", "activeTab" ],
+	"permissions": [ "notifications", "tabs", "activeTab", "webNavigation" ],
 	"background": {
 		"scripts": [ "Utils.js", "background.js" ],
 		"persistent": true

@@ -1,12 +1,13 @@
-const bannedSites = [ 'FACEBOOK.COM', 'YOUTUBE.COM', 'REDDIT.COM', 'STACKOVERFLOW.COM' ];
-const serverAddress = Utils.GetServerAdress();
-alert(serverAddress);
+let updateCount = 0;
+let timeoutCount = 0;
 async function RaiseNotfication() {
+	const serverAddress = Utils.GetServerAdress();
 	let message = await fetch(`${serverAddress}/giveMeSomeThingToSay`);
 	message = await message.text();
+	alert(message);
 	const sound = new Audio('notificationSound.mp3');
 	sound.muted = true;
-	sound.play();
+	//sound.play();
 	let options = {
 		body: message,
 		silent: true,
@@ -14,39 +15,56 @@ async function RaiseNotfication() {
 	};
 	return new Notification('your jewish mother says: ', options);
 }
-
-function SendNotification() {
+function NotificationsCallback() {
 	if (!('Notification' in window)) {
 	} else if (Notification.permission === 'granted') {
 		RaiseNotfication();
+		InitNotifications();
 	} else if (Notification.permission !== 'denied') {
 		Notification.requestPermission().then(function(permission) {
 			if (permission === 'granted') {
 				RaiseNotfication();
+				InitNotifications();
 			}
 		});
 	}
 }
-
-function GetRandomInterval() {
-	return Math.floor(Math.random() * 6000 + 3000);
+function InitNotifications(assertivness) {
+	timeoutCount++;
+	setTimeout(NotificationsCallback, GetRandomInterval(assertivness));
 }
 
-function GenerateRandomMessages() {
-	setTimeout(() => {
-		chrome.tabs.query({ active: true, currentWindow: true }, async function(tabs) {
-			if (tabs[0]) {
-				let isBlackSite = await fetch(`${serverAddress}/isBlackSite`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ url: window.location.href })
-				});
-				if (isBlackSite) {
-					SendNotification(tabs[0].url);
-					GenerateRandomMessages();
-				}
+function GetRandomInterval(assertivness) {
+	/*let min = 1 / assertivness * 60000; //for the softest - once every 10 minutes
+	let max = 1 / assertivness * 1800000; //for the softest  - once half an hour
+	return Math.floor(Math.random() * min + max);*/
+	return 5000;
+}
+async function OnChangeHandler() {
+	const serverAddress = Utils.GetServerAdress();
+	let timeOutId = setTimeout(() => {}, 0);
+	while (timeOutId > 0) {
+		clearTimeout(timeOutId);
+		timeOutId--;
+	}
+	chrome.tabs.getSelected(null, async function(tab) {
+		if (tab) {
+			let res = await fetch(`${serverAddress}/isBlackSite`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ url: tab.url })
+			});
+			let { isBlackSite, assertivness } = await res.json();
+
+			if (isBlackSite) {
+				InitNotifications(assertivness);
 			}
-		});
-	}, GetRandomInterval());
+		}
+	});
 }
-GenerateRandomMessages();
+function CheckIfBlackSite() {
+	chrome.tabs.onActivated.addListener(OnChangeHandler);
+	chrome.webNavigation.onHistoryStateUpdated.addListener(OnChangeHandler);
+}
+
+CheckIfBlackSite();

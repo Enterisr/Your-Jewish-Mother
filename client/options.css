@@ -48,7 +48,7 @@ footer {
 }
 .sites-box-ul {
 	list-style: none;
-	height: 75vh;
+	height: 67vh;
 	overflow: auto;
 	padding: 0;
 }
@@ -58,4 +58,31 @@ li {
 .input-error {
 	box-shadow: 0px 0px 4px 1px red !important;
 	border-radius: 2px;
+}
+input.obsses-slider {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 20em;
+	height: 1vh;
+	background: #73bbf752;
+	outline: none;
+	opacity: 0.7;
+	-webkit-transition: .2s;
+	transition: opacity .2s;
+	border-radius: 35px;
+}
+.obsses-slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	background: #6874e7;
+	cursor: pointer;
+}
+.slide-p-blueText {
+	color: #6874e7;
+}
+.slide-p-redText {
+	color: red;
 }
