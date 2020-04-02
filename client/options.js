@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 function PaintText(levels, currentAssertivness) {
 	const span = document.querySelector('#assertiveness-span');
-
 	if (levels.length == currentAssertivness + 1) {
 		span.classList.add('slide-p-redText');
 		span.classList.remove('slide-p-BlueText');
@@ -14,25 +13,35 @@ function PaintText(levels, currentAssertivness) {
 		span.classList.remove('slide-p-redText');
 	}
 }
-function InitSlider(levels, currentAssertivness) {
+
+function InitSlider(levels, assertivnessIdx) {
 	const slider = document.querySelector('.obsses-slider');
 	const assertiveLevelText = document.querySelector('.slide-p-BlueText');
-	currentAssertivness = currentAssertivness - 1;
-	slider.value = parseInt(100 * currentAssertivness / (levels.length - 1));
-	assertiveLevelText.textContent = levels[currentAssertivness];
-	PaintText(levels, currentAssertivness);
-	slider.addEventListener('change', async function() {
-		let assertivnessPrecent = parseInt(slider.value);
-		let assertivnessIdx = parseInt(levels.length / 101 * assertivnessPrecent); //101 so it won't ever get to non existing index..
-		assertiveLevelText.textContent = levels[assertivnessIdx];
-		PaintText(levels, assertivnessIdx);
+	assertivnessIdx = assertivnessIdx - 1;
+	slider.value = parseInt(100 * assertivnessIdx / (levels.length - 1));
+	assertiveLevelText.textContent = levels[assertivnessIdx];
+	PaintText(levels, assertivnessIdx);
 
+	slider.addEventListener('input', function() {
+		assertivnessIdx = HandleAssertivenessChange();
+	});
+
+	slider.addEventListener('change', async function() {
+		assertivnessIdx = HandleAssertivenessChange();
 		await fetch(`${server}/UpdateAssertivness`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ assertivness: assertivnessIdx + 1 })
 		});
 	});
+
+	function HandleAssertivenessChange() {
+		let assertivnessPrecent = parseInt(slider.value);
+		let assertivnessIdx = parseInt(levels.length / 101 * assertivnessPrecent); //101 so it won't ever get to non existing index..
+		assertiveLevelText.textContent = levels[assertivnessIdx];
+		PaintText(levels, assertivnessIdx);
+		return assertivnessIdx;
+	}
 }
 async function GetBlackSites() {
 	let data = await fetch(`${server}/GetUserInfo`, {

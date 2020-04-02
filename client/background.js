@@ -35,10 +35,9 @@ function InitNotifications(assertivness) {
 }
 
 function GetRandomInterval(assertivness) {
-	/*let min = 1 / assertivness * 60000; //for the softest - once every 10 minutes
+	let min = 1 / assertivness * 60000; //for the softest - once every 10 minutes
 	let max = 1 / assertivness * 1800000; //for the softest  - once half an hour
-	return Math.floor(Math.random() * min + max);*/
-	return 5000;
+	return Math.floor(Math.random() * min + max);
 }
 async function OnChangeHandler() {
 	const serverAddress = Utils.GetServerAdress();
