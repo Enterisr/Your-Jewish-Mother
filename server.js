@@ -17,7 +17,7 @@ function selectRandomFromArray(arr) {
 }
 async function registerIp(req, res) {
   try {
-    let ip = req.socket.remoteAddress;
+    let ip = req.ip;
     let user = { ip, assertivness: 0, black_sites: [] };
     let db = await MongoClient.connect(dbUrl);
     await db.db("your-jewish-mother").collection("user").insertOne(user);
@@ -30,7 +30,7 @@ async function registerIp(req, res) {
 app.post("/RegisterIp", registerIp);
 app.post("/isBlackSite", async (req, res) => {
   //this is expensive for the server, but we need it cause we don't know if the user will decide to fool around...
-  let ip = req.socket.remoteAddress;
+  let ip = req.ip;
   let url = sanitize(req.body.url);
   url = new URL(url);
   try {
@@ -61,7 +61,7 @@ app.get("/giveMeSomeThingToSay", (req, res) => {
   });
 });
 app.get("/GetUserInfo", async (req, res) => {
-  let ip = req.socket.remoteAddress;
+  let ip = req.ip;
   try {
     let db = await MongoClient.connect(dbUrl);
     let user = await db
@@ -76,7 +76,7 @@ app.get("/GetUserInfo", async (req, res) => {
   }
 });
 app.post("/PostNewBlackSite", async (req, res) => {
-  let ip = req.socket.remoteAddress;
+  let ip = req.ip;
   try {
     let db = await MongoClient.connect(dbUrl);
     let url = sanitize(req.body.url);
@@ -91,7 +91,7 @@ app.post("/PostNewBlackSite", async (req, res) => {
   }
 });
 app.post("/UpdateAssertivness", async (req, res) => {
-  let ip = req.socket.remoteAddress;
+  let ip = req.ip;
   try {
     let db = await MongoClient.connect(dbUrl);
     let assertivness = sanitize(req.body.assertivness);
@@ -105,6 +105,7 @@ app.post("/UpdateAssertivness", async (req, res) => {
     throw ex;
   }
 });
+app.set("trust proxy", true);
 app.listen(port, () =>
   console.log(`your-jewish mother server running on port ${port}`)
 );
