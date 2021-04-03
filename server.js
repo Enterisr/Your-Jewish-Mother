@@ -17,7 +17,7 @@ function selectRandomFromArray(arr) {
 }
 async function registerIp(req, res) {
   try {
-    let ip = req.ip;
+    let ip = req.connection.remoteAddress;
     let user = { ip, assertivness: 0, black_sites: [] };
     let db = await MongoClient.connect(dbUrl);
     await db.db("your-jewish-mother").collection("user").insertOne(user);
@@ -61,7 +61,7 @@ app.get("/giveMeSomeThingToSay", (req, res) => {
   });
 });
 app.get("/GetUserInfo", async (req, res) => {
-  let ip = req.ip;
+  let ip = req.connection.remoteAddress;
   try {
     let db = await MongoClient.connect(dbUrl);
     let user = await db
