@@ -10,7 +10,7 @@ const dbUrl = process.env.MONGO_URI;
 const levels = JSON.parse(fs.readFileSync("levels.json"));
 
 app.use(express.json());
-
+app.use(cors());
 function selectRandomFromArray(arr) {
   const rnd = Math.floor(Math.random() * arr.length);
   return arr[rnd];
