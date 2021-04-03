@@ -17,12 +17,11 @@ function selectRandomFromArray(arr) {
 }
 async function registerIp(req, res) {
   try {
+    let ip = req.ip;
+    let user = { ip, assertivness: 0, black_sites: [] };
     let db = await MongoClient.connect(dbUrl);
-    await db
-      .db("your-jewish-mother")
-      .collection("user")
-      .insertOne({ ip, assertivness: 0 });
-    res.send(true);
+    await db.db("your-jewish-mother").collection("user").insertOne(user);
+    res.send(user);
   } catch (ex) {
     res.send(false);
     throw ex;
@@ -69,8 +68,8 @@ app.get("/GetUserInfo", async (req, res) => {
       .db("your-jewish-mother")
       .collection("user")
       .findOne({ ip });
-    let data = { user, levels };
-    res.send(data);
+    if (user) return res.send({ user, levels });
+    registerIp(req, res);
   } catch (ex) {
     registerIp(req, res);
     throw ex;
