@@ -31,7 +31,7 @@ function NotificationsCallback(assertivness) {
 }
 function InitNotifications(assertivness) {
   timeoutCount++;
-  setTimeout((assertivness) => {
+  setTimeout(() => {
     NotificationsCallback(assertivness);
   }, GetRandomInterval(assertivness));
 }

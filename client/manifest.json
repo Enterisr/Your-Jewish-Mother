@@ -1,19 +1,19 @@
 {
-	"manifest_version": 2,
-	"name": "Your Jewish Mother",
-	"description": "Wish you stopped being lazy and started working? Your Mother can help!",
-	"version": "1.03",
+  "manifest_version": 2,
+  "name": "Your Jewish Mother",
+  "description": "Wish you stopped being lazy and started working? Your Mother can help!",
+  "version": "1.031",
 
-	"browser_action": {
-		"default_icon": "icon128.png",
-		"default_popup": "popup.html"
-	},
-	"permissions": [ "notifications", "tabs", "activeTab", "webNavigation" ],
-	"background": {
-		"scripts": [ "Utils.js", "background.js" ],
-		"persistent": true
-	},
+  "browser_action": {
+    "default_icon": "icon128.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["notifications", "tabs", "activeTab", "webNavigation"],
+  "background": {
+    "scripts": ["Utils.js", "background.js"],
+    "persistent": true
+  },
 
-	"web_accessible_resources": [ "notificationSound.mp3" ],
-	"icons": { "128": "icon128.png" }
+  "web_accessible_resources": ["notificationSound.mp3"],
+  "icons": { "128": "icon128.png" }
 }
